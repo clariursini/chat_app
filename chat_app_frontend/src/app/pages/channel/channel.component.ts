@@ -158,8 +158,25 @@ export class ChannelComponent implements OnInit {
           },
         },
       });
+
+      // Reset the resetReloadFlag
+      const reloadKey = `hasReloadedPrivateChat_${subscriber.id}`;
+      localStorage.removeItem(reloadKey);
+      console.log(`Reload flag reset for private channel: ${subscriber.id}`);
     } else {
       console.error('Current user ID is missing.');
     }
+  }
+
+  resetReloadFlag(channelId: string): void {
+    const reloadKey = `hasReloadedPublicChat_${channelId}`;
+    localStorage.removeItem(reloadKey);
+    console.log(`Reload flag reset for channel: ${channelId}`);
+  }
+
+  resetPrivateReloadFlag(userId: number): void {
+    const reloadKey = `hasReloadedPrivateChat_${userId}`;
+    localStorage.removeItem(reloadKey);
+    console.log(`Reload flag reset for private channel: ${userId}`);
   }
 }

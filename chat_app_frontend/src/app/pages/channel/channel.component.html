@@ -54,7 +54,7 @@
     <div *ngIf="subscribedChannels.length > 0" class="channel-list">
       <h3>Canales Suscritos</h3>
       <div *ngFor="let channel of subscribedChannels" class="channel-card">
-        <a [routerLink]="['/chat', channel.id]" class="channel-link">
+        <a [routerLink]="['/chat', channel.id]" class="channel-link" (click)="resetReloadFlag(channel.id)">
           <div class="channel-info">
             <span class="channel-name">{{ channel.name }}</span>
             <span class="channel-description">{{ channel.description || 'Sin descripción' }}</span>
@@ -62,6 +62,7 @@
           </div>
         </a>
       </div>
+
     </div>
 
     <!-- Public Channels -->
@@ -111,7 +112,7 @@
 
       <!-- Existing Direct Messages -->
       <div *ngFor="let dm of directMessages" class="channel-card">
-        <a [routerLink]="['/direct-chat', currentUser?.id,  dm.id]" class="channel-link">
+        <a [routerLink]="['/direct-chat', currentUser?.id,  dm.id]" class="channel-link" (click)="resetPrivateReloadFlag(dm.id)">
           <div class="channel-info">
             <span class="channel-name">{{ dm.nickname }}</span>
           </div>
