@@ -1,9 +1,9 @@
 module ApplicationCable
   class Connection < ActionCable::Connection::Base
     def connect
-      # You need to check the JWT token here for authentication
+      # Chequear el token en la conexión
       if current_user
-        # User is authenticated, proceed with the connection
+        # Si hay un usuario continuar la conexión
         logger.add_tags "ActionCable", current_user.nickname
         Rails.logger.info "WebSocket connection established for user: #{current_user.nickname}"
       else

@@ -42,7 +42,7 @@ class AuthController < ApplicationController
     user = User.authenticate(params[:email], params[:password])
 
     if user
-      # Check if the user is validated
+      # Chequeamos si el usuario está validado
       if user.validated
         # Generate a JWT if the user is validated
         token = JwtService.encode(user_id: user.id)

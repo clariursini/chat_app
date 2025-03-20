@@ -7,7 +7,6 @@ class ChatChannel < ApplicationCable::Channel
       stream_from "chat_#{params[:channel_id]}_channel"
     elsif params[:recipient_id].present?
       # Private direct message subscription
-      puts "ENTRO AL ELSIF WITH RECIPIENT ID"
       stream_from private_chat_stream(connection.current_user.id, params[:recipient_id])
     else
       reject
@@ -15,10 +14,8 @@ class ChatChannel < ApplicationCable::Channel
   end
 
   def unsubscribed
-    # Any cleanup needed when the channel is unsubscribed
   end
 
-  # Method to handle sending a message from the frontend (React, Angular, etc.)
   def send_message(data)
     if data['channel_id'].present?
       # Public message
@@ -62,7 +59,7 @@ class ChatChannel < ApplicationCable::Channel
   private
 
   def private_chat_stream(user1_id, user2_id)
-    # Convert both IDs to integers to ensure consistent comparison
+    # Convertir los IDs en un string para que sea único
     "direct_chat_#{[user1_id.to_i, user2_id.to_i].sort.join('_')}"
   end
 end

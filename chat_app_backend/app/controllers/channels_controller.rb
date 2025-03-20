@@ -2,21 +2,21 @@ class ChannelsController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    # Channels where the current user is subscribed
+    # Channels a los que el usuario esta suscrito
     subscribed_channels = Channel.joins(:subscriptions)
                                   .where(subscriptions: { user_id: current_user.id })
                                   .map do |channel|
       channel.as_json.merge(subscriber_count: channel.subscriptions.count)
     end
 
-    # Public channels where the current user is NOT subscribed
+    # Public channels a los que el usuario no esta suscrito
     remaining_public_channels = Channel.where(public: true)
                                        .where.not(id: subscribed_channels.map { |c| c['id'] })
                                        .map do |channel|
       channel.as_json.merge(subscriber_count: channel.subscriptions.count)
     end
 
-    # Find all users the current user has direct messages with
+    # Obtener los usuarios con los que el usuario ha tenido un chat directo
     direct_chat_users = Message.where.not(direct_recipient_id: nil)
                                .where('user_id = :user_id OR direct_recipient_id = :user_id', user_id: current_user.id)
                                .pluck(:user_id, :direct_recipient_id)
@@ -24,7 +24,7 @@ class ChannelsController < ApplicationController
                                .uniq
                                .reject { |id| id == current_user.id }
 
-    # Fetch user details (id, nickname) for the chat list
+    # Obtener detalles de los usuarios
     direct_messages = User.where(id: direct_chat_users).select(:id, :nickname)
 
     render json: {
@@ -48,13 +48,13 @@ class ChannelsController < ApplicationController
     @channel = Channel.find(params[:id])
     is_subscribed = @channel.subscriptions.exists?(user_id: current_user.id)
 
-    # Pagination parameters
+    # Pagination
     limit = params[:limit] || 10
     offset = params[:offset] || 0
 
-    # Fetch paginated messages
+    # Fetch
     messages = @channel.messages
-                       .order(created_at: :desc) # Fetch the most recent messages first
+                       .order(created_at: :desc)
                        .limit(limit)
                        .offset(offset)
 
@@ -70,7 +70,7 @@ class ChannelsController < ApplicationController
   def subscribe
     @channel = Channel.find(params[:id])
 
-    # Check if the user is already subscribed
+    # Chequear si el usuario ya está suscrito al canal
     if @channel.subscriptions.exists?(user_id: current_user.id)
       render json: {
         error: 'You are already subscribed to this channel.',
@@ -79,7 +79,7 @@ class ChannelsController < ApplicationController
       return
     end
 
-    # Create a new subscription
+    # Crear la suscripcion
     subscription = @channel.subscriptions.create(user: current_user)
 
     if subscription.persisted?
@@ -99,7 +99,7 @@ class ChannelsController < ApplicationController
   def unsubscribe
     @channel = Channel.find(params[:id])
 
-    # Find the subscription of the current user to the channel
+    # Buscar la suscripcion
     subscription = @channel.subscriptions.find_by(user_id: current_user.id)
 
     if subscription
