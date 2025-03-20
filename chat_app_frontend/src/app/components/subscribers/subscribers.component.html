@@ -1,0 +1,16 @@
+<div class="subscribers-dropdown">
+  <button (click)="toggleSubscribersDropdown()">
+    Ver suscriptores ({{ subscribers.length }})
+  </button>
+
+  <div *ngIf="showSubscribersDropdown" class="dropdown-content">
+    <ul>
+      <li *ngFor="let subscriber of subscribers">
+        {{ subscriber.nickname }}
+        <button *ngIf="subscriber.id !== currentUserId" (click)="sendDirectMessage(subscriber)">
+          Mensaje Directo
+        </button>
+      </li>
+    </ul>
+  </div>
+</div>

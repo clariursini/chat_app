@@ -1,0 +1,60 @@
+<div class="page-container">
+  <!-- Header -->
+  <div class="header">
+    <h2>Canal: {{ channelName }}</h2>
+    <!-- Subscription Section -->
+    <div class="subscription">
+      <button *ngIf="!isSubscribed" (click)="subscribeToChannel()">Suscribirse</button>
+      <button *ngIf="isSubscribed" (click)="unsubscribeFromChannel()">Desuscribirse</button>
+    </div>
+    <button class="round-button" (click)="goBack()">Volver</button>
+  </div>
+
+  <div class="channel-info">
+    <small>{{ channelDescription }}</small>
+
+    <!-- Dropdown para Suscriptores -->
+    <app-subscribers
+      [subscribers]="subscribers"
+      [currentUserId]="currentUser?.id ?? null"
+      (directMessage)="openDirectMessageForm($event)">
+    </app-subscribers>
+  </div>
+
+  <!-- Formulario para Mensajes Directos -->
+  <div class="direct-message-form" *ngIf="selectedRecipient">
+    <h3>Enviar Mensaje Directo a {{ selectedRecipient.nickname }}</h3>
+    <form (ngSubmit)="sendDirectMessageGoToChat(selectedRecipient, directMessageContent)">
+      <textarea [(ngModel)]="directMessageContent" name="content" placeholder="Escribe tu mensaje..." required></textarea>
+      <button type="submit">Enviar</button>
+      <button type="button" (click)="closeDirectMessageForm()">Cancelar</button>
+    </form>
+  </div>
+
+  <!-- Chat Container -->
+  <div class="chat-container">
+    <button *ngIf="hasMoreMessages" (click)="loadChannelMessages()" class="load-more-button">
+      Cargar más mensajes
+    </button>
+    <div class="messages" #messagesContainer>
+      <p *ngIf="messages.length === 0">No hay mensajes en este canal.</p>
+      <small *ngIf="messages.length === 0">Comience enviando un mensaje.</small>
+      <app-chat-message
+        *ngFor="let msg of messages"
+        [message]="msg"
+        [currentUserId]="currentUser?.id ?? null">
+      </app-chat-message>
+    </div>
+  </div>
+
+  <!-- Message Sender -->
+  <div class="chat-sender" *ngIf="isSubscribed">
+    <form (ngSubmit)="sendMessage()">
+      <input [(ngModel)]="message" name="message" placeholder="Escribe un mensaje..." required />
+      <button type="submit">Enviar</button>
+    </form>
+  </div>
+  <div class="chat-sender" *ngIf="!isSubscribed">
+    <p>Debes estar suscrito para enviar mensajes.</p>
+  </div>
+</div>

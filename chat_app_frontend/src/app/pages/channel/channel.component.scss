@@ -1,0 +1,273 @@
+/* Estilo para el contenedor del título y el botón */
+.title {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  margin-bottom: 20px;
+  gap: 10px;
+  margin-bottom: 0px;
+
+  &.principal {
+    padding-left: 10px;
+  }
+}
+
+/* Botón redondo */
+.round-button {
+  background-color: black;
+  color: white;
+  border: solid 1px white;
+  border-radius: 50%; /* Hace el botón redondo */
+  width: 40px;
+  height: 40px;
+  font-size: 24px;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.round-button:hover {
+  background-color: white; /* Azul más oscuro al pasar el cursor */
+  color: black;
+}
+
+.round-button:active {
+  transform: scale(0.95); /* Efecto de clic */
+}
+.create-channel-form {
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 10px; /* Rounded border */
+  padding: 20px;
+  max-width: 400px;
+  margin: 20px auto; /* Center the form */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  color: #333;
+}
+
+/* Style for each row */
+.form-row {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+
+/* Style for labels */
+label {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+/* Style for inputs and textarea */
+input,
+textarea {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Style for the buttons row */
+.buttons-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Style for buttons */
+button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+button.btn-primary {
+  background-color: #007bff;
+  color: white;
+}
+
+button.btn-primary:hover {
+  background-color: #0056b3;
+}
+
+button.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+}
+
+button.btn-secondary:hover {
+  background-color: #5a6268;
+}
+
+/* Estilo para el mensaje de error del formulario */
+.form-error {
+  margin-top: 10px;
+  color: #d9534f; /* Rojo para indicar error */
+  font-size: 14px;
+  font-weight: bold;
+}
+
+/* Lista de canales */
+.channel-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Espaciado entre tarjetas */
+  margin-top: 20px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+/* Tarjeta de canal */
+.channel-card {
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.channel-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Enlace del canal */
+.channel-link {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Información del canal */
+.channel-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  font-size: 14px;
+}
+
+/* Nombre del canal */
+.channel-name {
+  font-weight: bold;
+  font-size: 16px;
+  color: #333;
+  margin-right: 10px;
+}
+
+/* Descripción del canal */
+.channel-description {
+  font-size: 14px;
+  color: #666;
+  flex-grow: 1;
+  margin-right: 10px;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Cantidad de suscriptores */
+.channel-subscribers {
+  font-size: 12px;
+  color: #999;
+  text-align: right;
+}
+
+.user-dropdown {
+  background: #f9f9f9;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 10px;
+  max-height: 200px;
+  overflow-y: auto;
+
+  h3 {
+    color: #333;
+    margin: 0;
+  }
+
+  div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
+    border-bottom: 1px solid #eee;
+    color: #333;
+  }
+}
+
+.user-dropdown ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.user-dropdown li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 0;
+  border-bottom: 1px solid #eee;
+  color: #333;
+}
+
+.user-dropdown li:last-child {
+  border-bottom: none;
+}
+
+.user-dropdown button {
+  background: #007bff;
+  color: #fff;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.user-dropdown button:hover {
+  background: #0056b3;
+}
+
+.direct-message-form {
+  margin-top: 20px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #f9f9f9;
+
+  h3 {
+    color: #333;
+  }
+}
+
+.direct-message-form textarea {
+  width: 100%;
+  height: 80px;
+  margin-bottom: 10px;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.direct-message-form .submit {
+  margin-right: 10px;
+  background-color: #007bff;
+  color: #fff;
+}
+
+.direct-message-form .cancel {
+  margin-right: 10px;
+  background-color: #6c757d;
+  color: #fff;
+}

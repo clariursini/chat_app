@@ -1,0 +1,122 @@
+<div class="page-container">
+  <div class="title principal">
+    <h2>Canales</h2>
+    <button class="round-button" (click)="toggleCreateChannelForm()">+</button>
+  </div>
+
+  <!-- Create Channel Form -->
+  <div *ngIf="showCreateChannelForm" class="create-channel-form">
+    <h3>Crear Nuevo Canal</h3>
+    <form (ngSubmit)="createChannel()" class="form-container">
+      <!-- Row for Channel Name -->
+      <div class="form-row">
+        <label for="channelName">Nombre del Canal:</label>
+        <input
+          id="channelName"
+          type="text"
+          [(ngModel)]="newChannel.name"
+          name="name"
+          required
+          placeholder="Ingresa el nombre del canal"
+        />
+      </div>
+
+      <!-- Row for Channel Description -->
+      <div class="form-row">
+        <label for="channelDescription">Descripción (opcional):</label>
+        <textarea
+          id="channelDescription"
+          [(ngModel)]="newChannel.description"
+          name="description"
+          placeholder="Ingresa una descripción (opcional)"
+        ></textarea>
+      </div>
+
+      <!-- Row for Buttons -->
+      <div class="form-row buttons-row">
+        <button type="submit" class="btn btn-primary">Crear</button>
+        <button type="button" class="btn btn-secondary" (click)="toggleCreateChannelForm()">Cancelar</button>
+      </div>
+    </form>
+
+    <!-- Error Message for the Form -->
+    <div *ngIf="formErrorMessage" class="form-error">
+      <p>{{ formErrorMessage }}</p>
+    </div>
+  </div>
+
+  <div *ngIf="errorMessage" class="channel-list">
+    <p>{{ errorMessage }}</p>
+  </div>
+
+  <div *ngIf="!errorMessage">
+    <!-- Subscribed Channels -->
+    <div *ngIf="subscribedChannels.length > 0" class="channel-list">
+      <h3>Canales Suscritos</h3>
+      <div *ngFor="let channel of subscribedChannels" class="channel-card">
+        <a [routerLink]="['/chat', channel.id]" class="channel-link">
+          <div class="channel-info">
+            <span class="channel-name">{{ channel.name }}</span>
+            <span class="channel-description">{{ channel.description || 'Sin descripción' }}</span>
+            <span class="channel-subscribers">{{ channel.subscriber_count }} suscriptores</span>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Public Channels -->
+    <div *ngIf="remainingPublicChannels.length > 0" class="channel-list">
+      <h3>Canales Públicos</h3>
+      <div *ngFor="let channel of remainingPublicChannels" class="channel-card">
+        <a [routerLink]="['/chat', channel.id]" class="channel-link">
+          <div class="channel-info">
+            <span class="channel-name">{{ channel.name }}</span>
+            <span class="channel-description">{{ channel.description || 'Sin descripción' }}</span>
+            <span class="channel-subscribers">{{ channel.subscriber_count }} suscriptores</span>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Direct Messages -->
+    <div *ngIf="directMessages.length > 0" class="channel-list">
+      <div class="title">
+        <h3>Mensajes Directos</h3>
+        <button class="round-button" (click)="toggleUserDropdown()">+</button>
+      </div>
+
+      <!-- Dropdown to show all users -->
+      <div *ngIf="showUserDropdown" class="user-dropdown">
+        <div>
+          <h3>Seleccionar usuario:</h3>
+          <button (click)="toggleUserDropdown()">Cerrar</button>
+        </div>
+        <ul>
+          <li *ngFor="let user of allUsers">
+            {{ user.nickname }}
+            <button (click)="openDirectMessageForm(user)">Mensaje Directo</button>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Form to send a direct message -->
+      <div *ngIf="selectedUser" class="direct-message-form">
+        <h3>Enviar Mensaje Directo a {{ selectedUser.nickname }}</h3>
+        <form (ngSubmit)="sendDirectMessage(selectedUser, directMessageContent)">
+          <textarea [(ngModel)]="directMessageContent" name="messageContent" placeholder="Escribe tu mensaje..." required></textarea>
+          <button class="submit" type="submit">Enviar</button>
+          <button class="cancel" type="button" (click)="closeDirectMessageForm()">Cancelar</button>
+        </form>
+      </div>
+
+      <!-- Existing Direct Messages -->
+      <div *ngFor="let dm of directMessages" class="channel-card">
+        <a [routerLink]="['/direct-chat', currentUser?.id,  dm.id]" class="channel-link">
+          <div class="channel-info">
+            <span class="channel-name">{{ dm.nickname }}</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

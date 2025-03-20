@@ -1,0 +1,45 @@
+<div class="auth-container">
+  <div class="auth-header">
+    <h1>Chat App</h1>
+    <img src="/favicon.ico" alt="Chat App Icon" />
+  </div>
+  <div class="auth-form">
+    <h2 *ngIf="isLoginMode">Login</h2>
+    <h2 *ngIf="!isLoginMode">Registro</h2>
+
+    <form *ngIf="isLoginMode" (ngSubmit)="login()">
+      <div class="form-row">
+        <label for="email">Email:</label>
+        <input id="email" type="email" [(ngModel)]="email" name="email" required />
+      </div>
+      <div class="form-row">
+        <label for="password">Password:</label>
+        <input id="password" type="password" [(ngModel)]="password" name="password" required />
+      </div>
+      <button type="submit" class="btn btn-primary">Login</button>
+    </form>
+
+    <form *ngIf="!isLoginMode" (ngSubmit)="register()">
+      <div class="form-row">
+        <label for="email">Email:</label>
+        <input id="email" type="email" [(ngModel)]="email" name="email" required />
+      </div>
+      <div class="form-row">
+        <label for="password">Password:</label>
+        <input id="password" type="password" [(ngModel)]="password" name="password" required />
+      </div>
+      <div class="form-row">
+        <label for="nickname">Nickname:</label>
+        <input id="nickname" type="text" [(ngModel)]="nickname" name="nickname" required />
+      </div>
+      <button type="submit" class="btn btn-primary">Registrate</button>
+    </form>
+
+    <p class="toggle-message">
+      <span *ngIf="isLoginMode">No tenes una cuenta? <button (click)="toggleMode()">Registrate</button></span>
+      <span *ngIf="!isLoginMode">Ya tenes una cuenta? <button (click)="toggleMode()">Iniciá sesión</button></span>
+    </p>
+
+    <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
+  </div>
+</div>

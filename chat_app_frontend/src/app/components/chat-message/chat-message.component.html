@@ -1,0 +1,10 @@
+<div class="message" [ngClass]="{ 'sent': isSentByCurrentUser, 'received': !isSentByCurrentUser }">
+  <div class="message-content">
+    <strong *ngIf="!isSentByCurrentUser; else currentUserLabel">{{ message?.user }}</strong>
+    <ng-template #currentUserLabel>
+      <strong>Tú</strong>
+    </ng-template>
+    <p>{{ message?.message }}</p>
+    <span class="timestamp">{{ formattedTimestamp }}</span>
+  </div>
+</div>

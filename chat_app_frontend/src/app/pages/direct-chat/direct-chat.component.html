@@ -1,0 +1,29 @@
+<div class="page-container">
+  <!-- Header -->
+  <div class="header">
+    <h2>Chat con {{ recipientNickname }}</h2>
+    <button class="round-button" (click)="goBack()">Volver</button>
+  </div>
+
+  <!-- Chat Container -->
+  <div class="chat-container">
+    <button *ngIf="hasMoreMessages" (click)="loadDirectMessages()">Cargar mensajes anteriores</button>
+    <div class="messages" #messagesContainer>
+      <p *ngIf="messages.length === 0">No hay mensajes en este chat.</p>
+      <small *ngIf="messages.length === 0">Comience enviando un mensaje.</small>
+      <app-chat-message
+        *ngFor="let msg of messages"
+        [message]="msg"
+        [currentUserId]="currentUser?.id ?? null">
+      </app-chat-message>
+    </div>
+  </div>
+
+  <!-- Message Sender -->
+  <div class="chat-sender">
+    <form (ngSubmit)="sendMessage()">
+      <input [(ngModel)]="messageContent" name="message" placeholder="Escribe un mensaje..." required />
+      <button type="submit">Enviar</button>
+    </form>
+  </div>
+</div>

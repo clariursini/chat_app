@@ -1,0 +1,8 @@
+<div *ngIf="isLoggedIn()" class="navbar">
+  <div class="navbar-content">
+    <span class="user-nickname">Hola, {{ userNickname }}</span>
+    <button class="logout-button" (click)="logout()">Cerrar Sesión</button>
+  </div>
+</div>
+
+<router-outlet></router-outlet>

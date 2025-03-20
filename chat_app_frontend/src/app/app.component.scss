@@ -1,0 +1,45 @@
+/* Navbar container */
+.navbar {
+  background-color: #414141;
+  color: white;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  width: 100vw;
+  top: 0;
+  box-sizing: border-box;
+}
+
+/* Navbar content */
+.navbar-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 15px;
+  max-width: 100vw;
+}
+
+/* User nickname */
+.user-nickname {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+/* Logout button */
+.logout-button {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.logout-button:hover {
+  background-color: #c82333;
+}
