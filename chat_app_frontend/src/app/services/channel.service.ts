@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ChannelService {
-  private apiUrl = 'http://localhost:3000/channels'; // Replace with your backend URL
+  private apiUrl = 'http://localhost:3000/channels';
 
   constructor(private http: HttpClient) {}
 
@@ -19,7 +19,7 @@ export class ChannelService {
   // Create a new channel
   createChannel(channel: { name: string; description: string }, token: string): Observable<any> {
     const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}` // Add the token to the Authorization header
+      Authorization: `Bearer ${token}`
     });
 
     return this.http.post<any>(this.apiUrl, channel, { headers });
