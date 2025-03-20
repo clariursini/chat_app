@@ -25,9 +25,9 @@ export class DirectChatComponent implements OnInit {
   public messageContent: string = '';
   public currentUser: { id: number; nickname: string } | null = null;
 
-  private limit: number = 10; // Number of messages to load per request
-  private offset: number = 0; // Current offset for pagination
-  public hasMoreMessages: boolean = true; // Whether there are more messages to load
+  private limit: number = 10;
+  private offset: number = 0;
+  public hasMoreMessages: boolean = true;
 
   public firstArrivedToChat: boolean = true;
 
@@ -41,7 +41,7 @@ export class DirectChatComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Add a redirect to log in if no token
+    // Agregar un redirect si no se ha iniciado sesión
     if (!this.authService.getToken() || !this.authService.getCurrentUser()) {
       this.router.navigate(['/login']);
       return;
@@ -50,22 +50,19 @@ export class DirectChatComponent implements OnInit {
     const routeParams = this.route.snapshot.paramMap;
     this.recipientId = routeParams.get('recipientId') || '';
     this.currentUser = this.authService.getCurrentUser();
-    this.firstArrivedToChat = true;
 
-    // Check for a new message passed via navigation state
-    const navigation = this.router.getCurrentNavigation();
-    const state = navigation?.extras.state as { newMessage?: any };
-    if (state?.newMessage) {
-      console.log('Adding new message from navigation state:', state.newMessage);
-      this.messages.push(state.newMessage);
-      setTimeout(() => {
-        this.scrollToBottom();
-      }, 0);
+    // Chequear localStorage
+    const reloadKey = `hasReloadedPrivateChat_${this.recipientId}`;
+    if (!localStorage.getItem(reloadKey)) {
+      // Set the flag to ensure reload happens only once for this channel
+      localStorage.setItem(reloadKey, 'true');
+      console.log(`Reloading the page for the first time for private channel: ${this.recipientId}`);
+      window.location.reload();
     }
 
     this.loadDirectMessages();
 
-    // Subscribe to the private chat channel
+    // Subscribirse al canal privado
     this.wsService.joinDirectChat(this.recipientId, (data) => {
       this.addNewMessage(data);
     });
@@ -99,12 +96,12 @@ export class DirectChatComponent implements OnInit {
           // Update recipient nickname
           this.recipientNickname = response.chat_with.nickname;
 
-          // Check if there are more messages to load
+          // Chequear si hay mas mensajes
           if (newMessages.length < this.limit) {
             this.hasMoreMessages = false;
           }
 
-          // Increment the offset for the next request
+          // Incrementar el offset
           this.offset += this.limit;
 
           setTimeout(() => {
@@ -126,27 +123,25 @@ export class DirectChatComponent implements OnInit {
       timestamp: data.timestamp,
     };
 
-    // Ensure the message is relevant to the current chat
+    // Asegurar que el mensaje pertenezca a este chat
     if (
       (String(data.sender_id) === String(this.currentUser?.id) && String(data.recipient_id) === String(this.recipientId)) ||
       (String(data.sender_id) === String(this.recipientId) && String(data.recipient_id) === String(this.currentUser?.id))
     ) {
 
-      // Skip message if i am seding the message
-      // if (String(data.sender_id) === String(this.currentUser?.id)) {
-      //   console.log('Skipping message sent by the current user:', data);
-      //   return;
-      // }
+      // Hacer un skip de los mensajes enviados por el usuario actual
+      if (String(data.sender_id) === String(this.currentUser?.id)) {
+        console.log('Skipping message sent by the current user:', data);
+        return;
+      }
 
-      // Prepend the new message to the messages array
+      // Agregar el mensaje al chat
       console.log('Adding new message to chat:', newMessage);
-
-      // Prepend the new message to the messages array
       console.log('Messages before adding new one:', this.messages);
       this.messages = [...this.messages, newMessage];
       console.log('Messages after adding new one:', this.messages);
 
-        this.cdr.detectChanges(); // Forzar detección de cambios
+      this.cdr.detectChanges(); // Forzar detección de cambios
 
       setTimeout(() => {
         this.scrollToBottom();
@@ -173,29 +168,18 @@ export class DirectChatComponent implements OnInit {
         timestamp: new Date().toISOString(),
       };
 
-      // If firstArrivedToChat to true, renew suscription
-      if (this.firstArrivedToChat) {
-        console.log("ejecutando first arrived to chat")
-        // Renew suscription
-        this.wsService.joinDirectChat(this.recipientId, (data) => {
-          this.addNewMessage(data);
-        })
-        this.firstArrivedToChat = false;
-      }
-
-      // Add the message locally for the sender skip if i am seding the message
+      // Agregar el mensaje al chat localmente
       console.log('Adding sent message to chat:', newMessage);
       this.messages = [...this.messages, newMessage];
 
-      // this.messages.push(newMessage);
       setTimeout(() => {
         this.scrollToBottom();
       }, 0);
 
-      // Send the message via WebSocket
+      // Enviar el mensaje por WebSocket
       this.wsService.sendDirectMessage(this.recipientId, this.messageContent);
 
-      // Clear the input field
+      // Limpiar el contenido del mensaje
       this.messageContent = '';
     }
   }
