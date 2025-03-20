@@ -11,7 +11,7 @@ Este proyecto es una aplicación de chat en tiempo real.
 Clonar el repositorio:
 
 ```bash
-git clone https://github.com/TU_USUARIO/chat_app.git
+git clone https://github.com/clariursini/chat_app.git
 cd chat_app
 ```
 
