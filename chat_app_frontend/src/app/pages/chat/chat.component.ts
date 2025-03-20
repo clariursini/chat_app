@@ -4,13 +4,13 @@ import { WebSocketService } from '../../services/websocket.service';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'; // Import FormsModule
-import { ChatMessageComponent } from '../../components/chat-message/chat-message.component'; // Import ChatMessageComponent
+import { FormsModule } from '@angular/forms';
+import { ChatMessageComponent } from '../../components/chat-message/chat-message.component';
 import { SubscribersComponent } from '../../components/subscribers/subscribers.component';
 
 @Component({
   selector: 'app-chat',
-  standalone: true, // Mark as standalone
+  standalone: true,
   imports: [CommonModule, FormsModule, ChatMessageComponent, SubscribersComponent, ],
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.scss']
@@ -29,7 +29,7 @@ export class ChatComponent implements OnInit {
   messages: { message: string; user: string; userId: number; timestamp: string }[] = [];
   currentUser: { id: number; nickname: string } | null = null;
 
-  // Add limit and offset to track pagination
+  // Agregar variables para la paginación
   limit: number = 10;
   offset: number = 0;
   hasMoreMessages: boolean = true;
@@ -43,9 +43,23 @@ export class ChatComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.channelId = this.route.snapshot.paramMap.get('channelId') || '';
-    this.currentUser = this.authService.getCurrentUser(); // Get the current user's info
+    // Redireccionar al login si el usuario no está autenticado
+    if (!this.authService.isLoggedIn()) {
+      this.router.navigate(['/login']);
+      return;
+    }
 
+    this.channelId = this.route.snapshot.paramMap.get('channelId') || '';
+    this.currentUser = this.authService.getCurrentUser();
+
+    // Chequear localStorage
+    const reloadKey = `hasReloadedPublicChat_${this.channelId}`;
+    if (!localStorage.getItem(reloadKey)) {
+      // Setear la flag para que solo se recargue la página una vez
+      localStorage.setItem(reloadKey, 'true');
+      console.log(`Reloading the page for the first time for channel: ${this.channelId}`);
+      window.location.reload();
+    }
     this.loadChannelMessages();
     this.wsService.joinChannel(this.channelId, (data) => {
       this.addNewMessage(data);
@@ -53,7 +67,7 @@ export class ChatComponent implements OnInit {
   }
 
   loadChannelMessages(): void {
-    const token = this.authService.getToken(); // Retrieve the token from AuthService
+    const token = this.authService.getToken();
 
     if (!token) {
       console.error('Token is missing. Unable to load channel messages.');
@@ -61,8 +75,7 @@ export class ChatComponent implements OnInit {
       return;
     }
 
-    // Add limit and offset to the request
-    const headers = { Authorization: `Bearer ${token}` }; // Add the Authorization header
+    const headers = { Authorization: `Bearer ${token}` };
 
     this.http.get<any>(`http://localhost:3000/channels/${this.channelId}?limit=${this.limit}&offset=${this.offset}`, { headers }).subscribe(
       (response) => {
@@ -78,16 +91,16 @@ export class ChatComponent implements OnInit {
         this.isSubscribed = response.is_subscribed;
         this.subscribers = response.subscribers;
 
-        // Prepend new messages to maintain order
-        this.messages = [...newMessages, ...this.messages];
+        // Prepend nuevos mensajes para mantener el orden
+        this.messages = [...newMessages.reverse(), ...this.messages];
 
         // Update offset
         this.offset += this.limit;
 
-        // Check if there are more messages to load
+        // Chequear si hay mas mensajes
         this.hasMoreMessages = response.messages.length >= this.limit;
 
-        // Wait for the DOM to update before scrolling
+        // Esperar y desplazarse hacia abajo
         setTimeout(() => {
           this.scrollToBottom();
         }, 0);
@@ -105,9 +118,9 @@ export class ChatComponent implements OnInit {
       userId: data.user_id,
       timestamp: data.timestamp
     };
-    this.messages = [...this.messages, newMessage];  // Crear una nueva referencia al array
+    this.messages = [...this.messages, newMessage];
     console.log("Updated messages array:", this.messages);
-    // Wait for the DOM to update before scrolling
+    // Esperar y desplazarse hacia abajo
     setTimeout(() => {
       this.scrollToBottom();
     }, 0);
@@ -134,19 +147,19 @@ export class ChatComponent implements OnInit {
   }
 
   subscribeToChannel(): void {
-    const token = this.authService.getToken(); // Retrieve the token from AuthService
+    const token = this.authService.getToken();
 
     if (!token) {
       console.error('Token is missing. Unable to subscribe to the channel.');
       return;
     }
 
-    const headers = { Authorization: `Bearer ${token}` }; // Add the Authorization header
+    const headers = { Authorization: `Bearer ${token}` };
 
     this.http.post<any>(`http://localhost:3000/channels/${this.channelId}/subscribe`, {}, { headers }).subscribe(
       (response) => {
         console.log(response.message);
-        this.isSubscribed = true; // Update subscription status
+        this.isSubscribed = true;
         // Update subscriptors
         this.subscribers = response.subscribers;
       },
@@ -211,9 +224,9 @@ export class ChatComponent implements OnInit {
     ).subscribe(
       (response) => {
         console.log('Direct message sent:', response.message);
-        this.closeDirectMessageForm(); // Reset the form
+        this.closeDirectMessageForm();
 
-        // Redirect to the direct chat with the recipient
+        // Redireccionar al chat directo
         const currentUserId = this.currentUser?.id;
         if (currentUserId) {
           if (this.selectedRecipient) {
@@ -243,12 +256,12 @@ export class ChatComponent implements OnInit {
       return;
     }
 
-    // Subscribe to the private chat channel
+    // Subscribirse al canal privado
     this.wsService.joinDirectChat(subscriber.id.toString(), (data) => {});
-    // Use the WebSocketService to send the direct message
+    // Usar el WebSocketService para enviar el mensaje
     this.wsService.sendDirectMessage(subscriber.id.toString(), messageContent);
 
-    // Redirect to the direct chat with the recipient
+    // Redireccionar al chat directo
     const currentUserId = this.currentUser?.id;
     if (currentUserId) {
       console.log('Redirecting to direct chat:', currentUserId, subscriber.id);
@@ -256,5 +269,10 @@ export class ChatComponent implements OnInit {
     } else {
       console.error('Current user ID is missing.');
     }
+
+    // Reset the resetReloadFlag
+    const reloadKey = `hasReloadedPrivateChat_${subscriber.id}`;
+    localStorage.removeItem(reloadKey);
+    console.log(`Reload flag reset for private channel: ${subscriber.id}`);
   }
 }
