@@ -5,8 +5,8 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-root',
-  standalone: true, // Mark as standalone
-  imports: [RouterOutlet, CommonModule], // Import RouterOutlet for routing
+  standalone: true,
+  imports: [RouterOutlet, CommonModule],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
@@ -16,12 +16,12 @@ export class AppComponent {
 
   constructor(private authService: AuthService) {}
 
-  // Check if the user is logged in
+  // Chequear si el usuario está logueado
   isLoggedIn(): boolean {
     return this.authService.isLoggedIn();
   }
 
-  // Get the user's nickname
+  // Obtener el nickname del usuario
   get userNickname(): string {
     const nickname = this.authService.getNickname();
     return nickname
@@ -32,6 +32,6 @@ export class AppComponent {
   // Logout the user
   logout(): void {
     this.authService.logout();
-    window.location.reload(); // Reload the page to reset the state
+    window.location.reload();
   }
 }
